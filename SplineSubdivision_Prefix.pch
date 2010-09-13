@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'SplineSubdivision' target in the 'SplineSubdivision' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
