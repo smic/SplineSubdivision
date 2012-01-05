@@ -3,68 +3,97 @@
 //  SplineSubdivision
 //
 //  Created by Stephan Michels on 03.09.10.
-//  Copyright 2010 Beilstein Institut. All rights reserved.
+//  Copyright 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
 //
 
 #import "SplineDivisionView.h"
 
 
+static char SplineDivisionViewObservationContext;
+
+NSPoint midPoint(NSPoint p1, NSPoint p2);
+
+void addCurvesDivision(NSBezierPath *path, NSPoint p[], NSInteger count, CGFloat start, CGFloat end);
+BOOL addCurveDivision(NSBezierPath *path, NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat start, CGFloat end, BOOL started);
+CGFloat calcCurveLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4);
+
+void drawHandle(NSPoint p);
+
+
 @implementation SplineDivisionView
 
-@synthesize points, curveStart, curveEnd;
+@synthesize points = _points;
+@synthesize curveStart = _curveStart;
+@synthesize curveEnd = _curveEnd;
+
+#pragma mark - Initialization / Deallocation
 
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code here.
+        
+        // add tracking area to get mouse events
+        NSTrackingArea *trackingArea = [[[NSTrackingArea alloc] initWithRect:frame
+                                                                     options:(NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveInKeyWindow )
+                                                                       owner:self userInfo:nil] autorelease];
+		[self addTrackingArea:trackingArea];
+        
+        // add observer for properties
+        [self addObserver:self 
+               forKeyPath:@"points" 
+                  options:(NSKeyValueObservingOptionNew) 
+                  context:&SplineDivisionViewObservationContext];
+        [self addObserver:self 
+               forKeyPath:@"curveStart" 
+                  options:(NSKeyValueObservingOptionNew) 
+                  context:&SplineDivisionViewObservationContext];
+        [self addObserver:self 
+               forKeyPath:@"curveEnd" 
+                  options:(NSKeyValueObservingOptionNew) 
+                  context:&SplineDivisionViewObservationContext];
     }
     return self;
 }
 
-- (void)awakeFromNib {
-	NSMutableArray *newPoints = [NSMutableArray array];
-	[newPoints addObject:[NSValue valueWithPoint:NSMakePoint(50, 200)]];
-	[newPoints addObject:[NSValue valueWithPoint:NSMakePoint(90, 300)]];
-	[newPoints addObject:[NSValue valueWithPoint:NSMakePoint(160, 300)]];
-	[newPoints addObject:[NSValue valueWithPoint:NSMakePoint(200, 200)]];
-	[newPoints addObject:[NSValue valueWithPoint:NSMakePoint(240, 100)]];
-	[newPoints addObject:[NSValue valueWithPoint:NSMakePoint(310, 100)]];
-	[newPoints addObject:[NSValue valueWithPoint:NSMakePoint(350, 200)]];
-	self.points = newPoints;
-	
-	self.curveStart = 50.0f;
-	self.curveEnd = 150.0f;
+- (void)dealloc {
+    // remove observer for properties
+    [self removeObserver:self 
+              forKeyPath:@"points" 
+                 context:&SplineDivisionViewObservationContext];
+    [self removeObserver:self 
+              forKeyPath:@"curveStart" 
+                 context:&SplineDivisionViewObservationContext];
+    [self removeObserver:self 
+              forKeyPath:@"curveEnd" 
+                 context:&SplineDivisionViewObservationContext];
+    
+	self.points = nil;
+    
+	[super dealloc];
 }
 
-- (IBAction)changeCurveStart:(id)sender {
-	self.curveStart = [sender floatValue];
-	//self.curveEnd = MAX(self.curveStart + 1.0f, self.curveEnd);
-	
-	[self setNeedsDisplay:YES];
-}
+#pragma mark - User interaction
 
-- (IBAction)changeCurveEnd:(id)sender {
-	self.curveEnd = [sender floatValue];
-	//self.curveEnd = MAX(self.curveStart + 1.0f, self.curveEnd);
-	
-	[self setNeedsDisplay:YES];
-}
-
-
-- (void)mouseDown:(NSEvent *)event {
-	NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-	NSInteger selectedPointIndex = NSNotFound;
+- (NSUInteger)pointIndexUnderMouse:(NSPoint)point {
 	NSInteger count = [self.points count];
 	for (NSInteger index = 0; index < count; index++) {
 		NSPoint selectedPoint = [[self.points objectAtIndex:index] pointValue];
 		NSRect handleRect = NSInsetRect(NSMakeRect(selectedPoint.x, selectedPoint.y, 0, 0), -5, -5);
 		if (NSPointInRect(point, handleRect)) {
-			selectedPointIndex = index;
+			return index;
 			break;
 		}
 	}
+    return NSNotFound;
+}
+
+- (void)mouseDown:(NSEvent *)event {
+	NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+	NSInteger selectedPointIndex = [self pointIndexUnderMouse:point];
 	if (selectedPointIndex == NSNotFound) return;
 	
+    [[NSCursor closedHandCursor] set];
 	NSRect bounds = self.bounds;
 	while ([event type]!=NSLeftMouseUp) {
 		event = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
@@ -106,35 +135,61 @@
 		[newPoints release];
 		
 		point = currentPoint;
-		self.needsDisplay = YES;
+	}
+    
+    [[NSCursor openHandCursor] set];
+}
+
+- (void)mouseMoved:(NSEvent *)event {
+	NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+	NSInteger selectedPointIndex = [self pointIndexUnderMouse:point];
+	if (selectedPointIndex == NSNotFound) {
+		[[NSCursor arrowCursor] set];
+	} else {
+		[[NSCursor openHandCursor] set];
 	}
 }
 
+- (void)mouseEntered:(NSEvent *)event {
+	[[NSCursor arrowCursor] push];
+}
+
+- (void)mouseExited:(NSEvent *)event {
+	[NSCursor pop];
+}
+
+#pragma mark - Drawinng
+
 - (void)drawRect:(NSRect)rect {
-		NSInteger count = [self.points count];
-		NSPoint p[count];
-		for (NSInteger index = 0; index < count; index++) {
-			p[index] = [[self.points objectAtIndex:index] pointValue];
-		}
-		
-		/*NSBezierPath *path = [NSBezierPath bezierPath];
-		[path moveToPoint:p[0]];
-		[path curveToPoint:p[3] controlPoint1:p[1] controlPoint2:p[2]];
-		[path curveToPoint:p[6] controlPoint1:p[4] controlPoint2:p[5]];
-		
-		[path stroke];
-		
-		*/
-	
-	// NSLog(@"start=%f, end=%f, length=%f", self.curveStart, self.curveEnd, calcCurveLength(p[0], p[1], p[2], p[3]));
-	
-	//drawSpline(p[0], p[1], p[2], p[3], 4);
-	//drawSpline(p[3], p[4], p[5], p[6], 4);
-	//drawSplineWithLength(p[0], p[1], p[2], p[3], self.splineLength);
-	
+    
+    // fill background
+    [[NSColor whiteColor] set];
+    NSRectFill(rect);
+    
+    // draw borders
+    [NSBezierPath setDefaultLineWidth:0.0f];
+    [[NSColor lightGrayColor] set];
+    [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(self.bounds), NSMinY(self.bounds)) 
+                              toPoint:NSMakePoint(NSMaxX(self.bounds), NSMinY(self.bounds))];
+    [[NSColor darkGrayColor] set];
+    [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(self.bounds), NSMaxY(self.bounds)) 
+                              toPoint:NSMakePoint(NSMaxX(self.bounds), NSMaxY(self.bounds))];
+    
+    
+    NSUInteger pointCount = [self.points count];
+    if (pointCount == 0) {
+        return;
+    }
+    
+    NSPoint p[pointCount];
+    for (NSUInteger pointIndex = 0; pointIndex < pointCount; pointIndex++) {
+        p[pointIndex] = [[self.points objectAtIndex:pointIndex] pointValue];
+    }
+    
 	NSBezierPath *path = [NSBezierPath bezierPath];
-	addCurvesDivision(path, p, count, self.curveStart, self.curveEnd);
+	addCurvesDivision(path, p, pointCount, self.curveStart, self.curveEnd);
 	
+    // draw curve
 	[[NSColor colorWithDeviceRed:22.0f/255.0f green:32.0f/55.0f blue:27.0f/255.0f alpha:1.0f] set];
 	path.lineWidth = 20.0f;
 	[path stroke];
@@ -143,43 +198,56 @@
 	path.lineWidth = 0.0f;
 	[path stroke];
 	
-	
-	
-	
+	// draw helper lines and handles
 	CGFloat dashPattern[2];
-	dashPattern[0] = 5.0f; //segment painted with stroke color
-	dashPattern[1] = 2.0f; //segment not painted with a color
+	dashPattern[0] = 5.0f;
+	dashPattern[1] = 2.0f;
 	
-	for (NSInteger index = 0; index < count - 1; index += 3) {
+	for (NSUInteger pointIndex = 0; pointIndex < pointCount - 1; pointIndex += 3) {
 		
 		[[NSColor redColor] set];
 		NSBezierPath *path2 = [NSBezierPath bezierPath];
 		[path2 setLineDash:dashPattern count: 2 phase: 0.0];
-		[path2 moveToPoint:p[index]];
-		[path2 lineToPoint:p[index + 1]];
-		[path2 moveToPoint:p[index + 2]];
-		[path2 lineToPoint:p[index + 3]];
+		[path2 moveToPoint:p[pointIndex]];
+		[path2 lineToPoint:p[pointIndex + 1]];
+		[path2 moveToPoint:p[pointIndex + 2]];
+		[path2 lineToPoint:p[pointIndex + 3]];
 		[path2 stroke];
 		
-		[[NSColor blackColor] set];
-		drawHandle(p[index]);
-		drawHandle(p[index + 3]);
+        [[NSColor whiteColor] set];
+        drawHandle(p[pointIndex]);
+        [[NSColor whiteColor] set];
+		drawHandle(p[pointIndex + 3]);
 		
 		[[NSColor redColor] set];
-		drawHandle(p[index + 1]);
-		drawHandle(p[index + 2]);
+		drawHandle(p[pointIndex + 1]);
+        [[NSColor redColor] set];
+		drawHandle(p[pointIndex + 2]);
 		
 	}
 }
 
-- (BOOL)isFlipped {
-	return YES;
-}
+#pragma mark - KVO
 
-- (void)dealloc {
-	self.points = nil;
-		 
-	[super dealloc];
+-(void)observeValueForKeyPath:(NSString *)keyPath 
+                     ofObject:(id)object 
+                       change:(NSDictionary *)change 
+                      context:(void *)context {
+    if (context != &SplineDivisionViewObservationContext) {
+        [super observeValueForKeyPath:keyPath 
+                             ofObject:object 
+                               change:change 
+                              context:context];
+        return;
+    }
+    
+    if ([keyPath isEqualToString:@"points"]) {
+        [self setNeedsDisplay:YES];
+    } else if ([keyPath isEqualToString:@"curveStart"]) {
+        [self setNeedsDisplay:YES];
+    } else if ([keyPath isEqualToString:@"curveEnd"]) {
+        [self setNeedsDisplay:YES];
+    }
 }
 
 @end
@@ -187,29 +255,6 @@
 NSPoint midPoint(NSPoint p1, NSPoint p2) {
 	return NSMakePoint((p1.x + p2.x) / 2.0f, (p1.y + p2.y) / 2.0f);
 }
-
-/*void drawSpline(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, NSInteger deep) {
-	
-	// Calculate all the mid-points of the line segments
-    NSPoint p12   = midPoint(p1, p2);
-    NSPoint p23   = midPoint(p2, p3);
-    NSPoint p34   = midPoint(p3, p4);
-    NSPoint p123  = midPoint(p12, p23);
-    NSPoint p234  = midPoint(p23, p34);
-    NSPoint p1234 = midPoint(p123, p234);
-	
-    if(deep <= 0) {
-		[NSBezierPath strokeLineFromPoint:p1 toPoint:p4];
-    } else {
-        drawSpline(p1, p12, p123, p1234, deep - 1); 
-        drawSpline(p1234, p234, p34, p4, deep - 1);
-	}
-	
-//	drawHandle(p1);
-//	drawHandle(p2);
-//	drawHandle(p3);
-//	drawHandle(p4);
-}*/
 
 void addCurvesDivision(NSBezierPath *path, NSPoint p[], NSInteger count, CGFloat start, CGFloat end) {
 	if (start >= end) {
@@ -304,26 +349,31 @@ CGFloat calcCurveLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
     NSPoint p234  = midPoint(p23, p34);
     NSPoint p1234 = midPoint(p123, p234);
 	
+    // Try to approximate the full cubic curve by a single straight line
 	CGFloat dx = p4.x - p1.x;
 	CGFloat dy = p4.y - p1.y;
 	
 	CGFloat d2 = fabs(((p2.x - p4.x) * dy - (p2.y - p4.y) * dx));
 	CGFloat d3 = fabs(((p3.x - p4.x) * dy - (p3.y - p4.y) * dx));
 	
-	if((d2 + d3)*(d2 + d3) <= m_distance_tolerance * (dx*dx + dy*dy)) {
+	if((d2 + d3) * (d2 + d3) <= m_distance_tolerance * (dx * dx + dy * dy)) {
 		if (dx == 0.0f) {
 			return dy;
 		} else if (dy == 0.0f) {
 			return dx;
 		}
 		
-		return sqrtf(dx * dx + dy * dy);
-    } else {
-        return calcCurveLength(p1, p12, p123, p1234) + 
-			calcCurveLength(p1234, p234, p34, p4);
-	}
+		return hypotf(dx, dy);
+    }
+    
+    // Continue subdivision
+    return calcCurveLength(p1, p12, p123, p1234) + 
+           calcCurveLength(p1234, p234, p34, p4);
 }
 
 void drawHandle(NSPoint p) {
-	NSRectFill(NSInsetRect(NSMakeRect(p.x, p.y, 0, 0), -3, -3));
+    NSRect rect = NSInsetRect(NSMakeRect(p.x, p.y, 0, 0), -3, -3);
+	NSRectFill(rect);
+    [[NSColor blackColor] set];
+    NSFrameRect(rect);
 }
