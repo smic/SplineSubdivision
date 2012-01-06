@@ -48,14 +48,17 @@ CGFloat SubdivisionCalcCurveLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p
 
                 CGFloat length = hypotf(dx, dy);
                 
-                if (start <= 0 || length <= end) {
+                NSLog(@"start=%f end=%f length=%f", start, end, length);
+                if (start < length) {
                     CGFloat d1 = MAX(start, 0);
                     CGFloat d2 = MIN(length, end);
                     
+                    // Attention: p1 will be modified
+                    p2.x = p1.x + dx * d2 / length;
+                    p2.y = p1.y + dy * d2 / length;
                     p1.x = p1.x + dx * d1 / length;
                     p1.y = p1.y + dy * d1 / length;
-                    p2.x = p2.x + dx * d2 / length;
-                    p2.y = p2.y + dy * d2 / length;
+                    
                     
                     if (!(started)) {
                         started = YES;

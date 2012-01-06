@@ -57,6 +57,7 @@
 }
 
 - (NSBezierPath *)pathForExample:(NSUInteger)exampleIndex {
+    NSLog(@"Path %i", exampleIndex);
     switch (exampleIndex) {
         case 0: {
             NSBezierPath *path = [NSBezierPath bezierPath];
@@ -90,7 +91,18 @@
         case 4: {
             NSBezierPath *path = [NSBezierPath bezierPath];
             [path moveToPoint:NSMakePoint(100, 100)];
-            [path curveToPoint:NSMakePoint(300, 100) controlPoint1:NSMakePoint(350, 300) controlPoint2:NSMakePoint(50, 300)];
+            [path curveToPoint:NSMakePoint(100, 300) controlPoint1:NSMakePoint(150, 150) controlPoint2:NSMakePoint(150, 250)];
+            [path lineToPoint:NSMakePoint(400, 300)];
+            [path curveToPoint:NSMakePoint(400, 100) controlPoint1:NSMakePoint(350, 250) controlPoint2:NSMakePoint(350, 150)];
+            return path;
+        } break;
+
+        case 5: {
+            NSBezierPath *path = [NSBezierPath bezierPath];
+            [path moveToPoint:NSMakePoint(200, 100)];
+            [path curveToPoint:NSMakePoint(200, 300) controlPoint1:NSMakePoint(150, 150) controlPoint2:NSMakePoint(150, 250)];
+            [path moveToPoint:NSMakePoint(300, 300)];
+            [path curveToPoint:NSMakePoint(300, 100) controlPoint1:NSMakePoint(350, 250) controlPoint2:NSMakePoint(350, 150)];
             return path;
         } break;
             
