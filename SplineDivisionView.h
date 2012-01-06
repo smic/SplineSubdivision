@@ -11,7 +11,7 @@
 
 @interface SplineDivisionView : NSView
 
-@property (nonatomic, retain) NSArray *points;
+@property (nonatomic, retain) NSBezierPath *path;
 @property (nonatomic, assign) CGFloat curveStart;
 @property (nonatomic, assign) CGFloat curveEnd;
 
