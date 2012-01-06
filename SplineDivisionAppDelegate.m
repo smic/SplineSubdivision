@@ -3,7 +3,7 @@
 //  SplineSubdivision
 //
 //  Created by Stephan Michels on 03.09.10.
-//  Copyright 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
+//  Copyright (c) 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
 //
 
 #import "SplineDivisionAppDelegate.h"
@@ -34,8 +34,8 @@
 -(void)applicationDidFinishLaunching:(NSNotification *)notification {
     self.splineDivisionView.path = [self pathForExample:0];
     
-    self.splineDivisionView.curveStart = 50.0f;
-    self.splineDivisionView.curveEnd = 150.0f;
+    self.splineDivisionView.pathStart = 50.0f;
+    self.splineDivisionView.pathEnd = 150.0f;
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication {
@@ -45,11 +45,11 @@
 #pragma mark - Actions
 
 - (IBAction)changeCurveStart:(id)sender {
-	self.splineDivisionView.curveStart = [sender floatValue];
+	self.splineDivisionView.pathStart = [sender floatValue];
 }
 
 - (IBAction)changeCurveEnd:(id)sender {
-	self.splineDivisionView.curveEnd = [sender floatValue];
+	self.splineDivisionView.pathEnd = [sender floatValue];
 }
 
 - (IBAction)selectExample:(id)sender {
@@ -57,7 +57,6 @@
 }
 
 - (NSBezierPath *)pathForExample:(NSUInteger)exampleIndex {
-    NSLog(@"Path %i", exampleIndex);
     switch (exampleIndex) {
         case 0: {
             NSBezierPath *path = [NSBezierPath bezierPath];

@@ -3,7 +3,7 @@
 //  SplineSubdivision
 //
 //  Created by Stephan Michels on 03.09.10.
-//  Copyright 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
+//  Copyright (c) 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
 //
 
 #import "SplineDivisionView.h"
@@ -29,8 +29,8 @@ typedef struct {
 @implementation SplineDivisionView
 
 @synthesize path = _path;
-@synthesize curveStart = _curveStart;
-@synthesize curveEnd = _curveEnd;
+@synthesize pathStart = _pathStart;
+@synthesize pathEnd = _pathEnd;
 
 #pragma mark - Initialization / Deallocation
 
@@ -51,11 +51,11 @@ typedef struct {
                   options:(NSKeyValueObservingOptionNew) 
                   context:&SplineDivisionViewObservationContext];
         [self addObserver:self 
-               forKeyPath:@"curveStart" 
+               forKeyPath:@"pathStart" 
                   options:(NSKeyValueObservingOptionNew) 
                   context:&SplineDivisionViewObservationContext];
         [self addObserver:self 
-               forKeyPath:@"curveEnd" 
+               forKeyPath:@"pathEnd" 
                   options:(NSKeyValueObservingOptionNew) 
                   context:&SplineDivisionViewObservationContext];
     }
@@ -68,10 +68,10 @@ typedef struct {
               forKeyPath:@"path" 
                  context:&SplineDivisionViewObservationContext];
     [self removeObserver:self 
-              forKeyPath:@"curveStart" 
+              forKeyPath:@"pathStart" 
                  context:&SplineDivisionViewObservationContext];
     [self removeObserver:self 
-              forKeyPath:@"curveEnd" 
+              forKeyPath:@"pathEnd" 
                  context:&SplineDivisionViewObservationContext];
     
 	self.path = nil;
@@ -81,6 +81,7 @@ typedef struct {
 
 #pragma mark - User interaction
 
+// number of point for a given path element
 - (NSUInteger)numberOfPointsForElement:(NSBezierPathElement)element {
     switch (element) {
         case NSMoveToBezierPathElement:
@@ -98,6 +99,7 @@ typedef struct {
     }
 }
 
+// determine a path element and the corresponding point under a given point
 - (PathPoint)pathPointUnderMouse:(NSPoint)point {
 	NSUInteger numberOfElements = [self.path elementCount];
     
@@ -136,6 +138,7 @@ typedef struct {
         NSPoint points[3];
         NSBezierPathElement element = [self.path elementAtIndex:(NSInteger)selectedPathPoint.elementIndex associatedPoints:points];
         
+        // move point
         points[selectedPathPoint.pointIndex].x += dx;
         points[selectedPathPoint.pointIndex].y += dy;
         [self.path setAssociatedPoints:points atIndex:(NSInteger)selectedPathPoint.elementIndex];
@@ -210,7 +213,7 @@ typedef struct {
 	[self.path stroke];
     
     // draw sub-path
-    NSBezierPath *subpath = [self.path subpathFromLength:self.curveStart toLength:self.curveEnd];
+    NSBezierPath *subpath = [self.path subpathFromLength:self.pathStart toLength:self.pathEnd];
 	
 	[[NSColor colorWithDeviceRed:22.0f/255.0f green:32.0f/55.0f blue:27.0f/255.0f alpha:1.0f] set];
 	subpath.lineWidth = 20.0f;
@@ -305,7 +308,6 @@ typedef struct {
     NSFrameRect(rect);
 }
 
-
 #pragma mark - KVO
 
 -(void)observeValueForKeyPath:(NSString *)keyPath 
@@ -322,9 +324,9 @@ typedef struct {
     
     if ([keyPath isEqualToString:@"path"]) {
         [self setNeedsDisplay:YES];
-    } else if ([keyPath isEqualToString:@"curveStart"]) {
+    } else if ([keyPath isEqualToString:@"pathStart"]) {
         [self setNeedsDisplay:YES];
-    } else if ([keyPath isEqualToString:@"curveEnd"]) {
+    } else if ([keyPath isEqualToString:@"pathEnd"]) {
         [self setNeedsDisplay:YES];
     }
 }

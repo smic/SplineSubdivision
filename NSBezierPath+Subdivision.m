@@ -26,13 +26,12 @@ CGFloat SubdivisionCalcCurveLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p
     NSPoint previousPoint;
     NSBezierPath *subpath = [NSBezierPath bezierPath];
     for (NSUInteger elementIndex = 0; elementIndex < [self elementCount]; elementIndex++) {
-        
+        // if we already reached the end
         if (end < 0) {
             break;
         }
         
         NSBezierPathElement element = [self elementAtIndex:(NSInteger)elementIndex associatedPoints:points];
-//        NSLog(@"Element: %i", element);
         switch (element) {
             case NSMoveToBezierPathElement: {
                 started = NO;
@@ -47,8 +46,8 @@ CGFloat SubdivisionCalcCurveLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p
                 CGFloat dy = p2.y - p1.y;
 
                 CGFloat length = hypotf(dx, dy);
-                
-                NSLog(@"start=%f end=%f length=%f", start, end, length);
+
+                // check if the reached the start
                 if (start < length) {
                     CGFloat d1 = MAX(start, 0);
                     CGFloat d2 = MIN(length, end);
@@ -58,7 +57,6 @@ CGFloat SubdivisionCalcCurveLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p
                     p2.y = p1.y + dy * d2 / length;
                     p1.x = p1.x + dx * d1 / length;
                     p1.y = p1.y + dy * d1 / length;
-                    
                     
                     if (!(started)) {
                         started = YES;

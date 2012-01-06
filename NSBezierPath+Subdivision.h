@@ -10,6 +10,6 @@
 
 @interface NSBezierPath (Subdivision)
 
-- (NSBezierPath *)subpathFromLength:(CGFloat)startLength toLength:(CGFloat)endLength;
+- (NSBezierPath *)subpathFromLength:(CGFloat)start toLength:(CGFloat)end;
 
 @end
