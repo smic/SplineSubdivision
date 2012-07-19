@@ -17,6 +17,7 @@
 
 - (IBAction)changeCurveStart:(id)sender;
 - (IBAction)changeCurveEnd:(id)sender;
+- (IBAction)changeCurveProbe:(id)sender;
 - (IBAction)selectExample:(id)sender;
 
 @end

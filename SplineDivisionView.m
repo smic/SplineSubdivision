@@ -31,6 +31,7 @@ typedef struct {
 @synthesize path = _path;
 @synthesize pathStart = _pathStart;
 @synthesize pathEnd = _pathEnd;
+@synthesize probe = _probe;
 
 #pragma mark - Initialization / Deallocation
 
@@ -54,9 +55,13 @@ typedef struct {
                forKeyPath:@"pathStart" 
                   options:(NSKeyValueObservingOptionNew) 
                   context:&SplineDivisionViewObservationContext];
-        [self addObserver:self 
+        [self addObserver:self
                forKeyPath:@"pathEnd" 
                   options:(NSKeyValueObservingOptionNew) 
+                  context:&SplineDivisionViewObservationContext];
+        [self addObserver:self
+               forKeyPath:@"probe"
+                  options:(NSKeyValueObservingOptionNew)
                   context:&SplineDivisionViewObservationContext];
     }
     return self;
@@ -70,8 +75,11 @@ typedef struct {
     [self removeObserver:self 
               forKeyPath:@"pathStart" 
                  context:&SplineDivisionViewObservationContext];
-    [self removeObserver:self 
+    [self removeObserver:self
               forKeyPath:@"pathEnd" 
+                 context:&SplineDivisionViewObservationContext];
+    [self removeObserver:self
+              forKeyPath:@"probe"
                  context:&SplineDivisionViewObservationContext];
     
 	self.path = nil;
@@ -190,7 +198,7 @@ typedef struct {
 	[NSCursor pop];
 }
 
-#pragma mark - Drawinng
+#pragma mark - Drawing
 
 - (void)drawRect:(NSRect)rect {
     
@@ -263,6 +271,10 @@ typedef struct {
         }
     }
     
+    // draw probe
+    CGPoint probePoint = [self.path pointAtLength:self.probe];
+    [self drawProbeAtPoint:probePoint];
+    
     // draw handle for all points
     for (NSUInteger elementIndex = 0; elementIndex < numberOfElements; elementIndex++) {
         NSBezierPathElement element = [self.path elementAtIndex:(NSInteger)elementIndex associatedPoints:points];
@@ -301,6 +313,17 @@ typedef struct {
     }
 }
 
+- (void)drawProbeAtPoint:(NSPoint)point {
+    
+    NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect:NSMakeRect(point.x - 4.0f,
+                                                                           point.y - 4.0f,
+                                                                           8.0f, 8.0)];
+    [[NSColor redColor] set];
+    [path fill];
+//    [[NSColor colorWithDeviceRed:0.2f green:0.2f blue:0.6f alpha:1.0f] set];
+//    [path stroke];
+}
+
 - (void)drawHandleAtPoint:(NSPoint)point {
     NSRect rect = NSInsetRect(NSMakeRect(point.x, point.y, 0, 0), -3, -3);
 	NSRectFill(rect);
@@ -327,6 +350,8 @@ typedef struct {
     } else if ([keyPath isEqualToString:@"pathStart"]) {
         [self setNeedsDisplay:YES];
     } else if ([keyPath isEqualToString:@"pathEnd"]) {
+        [self setNeedsDisplay:YES];
+    } else if ([keyPath isEqualToString:@"probe"]) {
         [self setNeedsDisplay:YES];
     }
 }

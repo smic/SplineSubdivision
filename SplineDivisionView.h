@@ -14,5 +14,6 @@
 @property (nonatomic, retain) NSBezierPath *path;
 @property (nonatomic, assign) CGFloat pathStart;
 @property (nonatomic, assign) CGFloat pathEnd;
+@property (nonatomic, assign) CGFloat probe;
 
 @end

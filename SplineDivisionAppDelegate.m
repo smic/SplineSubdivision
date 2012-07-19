@@ -52,6 +52,10 @@
 	self.splineDivisionView.pathEnd = [sender floatValue];
 }
 
+- (IBAction)changeCurveProbe:(id)sender {
+	self.splineDivisionView.probe = [sender floatValue];
+}
+
 - (IBAction)selectExample:(id)sender {
     self.splineDivisionView.path = [self pathForExample:[sender indexOfSelectedItem]];
 }
