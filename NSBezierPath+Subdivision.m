@@ -14,6 +14,9 @@
 NSPoint MidPoint(NSPoint p1, NSPoint p2);
 void SubdivisionAddCurveDivision(NSBezierPath *path, NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat *start, CGFloat *end, BOOL *started);
 CGFloat SMSplineGetTotalLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4);
+BOOL SMSplineIsLinear(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4);
+CGFloat SMLineGetLength(CGPoint p1, CGPoint p2);
+CGPoint SMLineGetPointAtParameter(CGPoint p1, CGPoint p2, double u);
 double SMSplineParameterForLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat length);
 CGPoint SMSplineGetPointAtParameter(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, double u);
 CGFloat SMSplineTerm1(CGFloat u);
@@ -112,18 +115,12 @@ CGFloat SMSplineTerm4(CGFloat u);
                 NSPoint p1 = previousPoint;
                 NSPoint p2 = points[0];
                 
-                CGFloat dx = p2.x - p1.x;
-                CGFloat dy = p2.y - p1.y;
-                
-                CGFloat lineLength = hypotf(dx, dy);
+                CGFloat lineLength = SMLineGetLength(p1, p2);
                 
                 if (length <= 0) {
                     return p1;
                 } else if (length <= lineLength) {
-                    CGPoint point;
-                    point.x = p1.x + dx * length / lineLength;
-                    point.y = p1.y + dy * length / lineLength;
-                    return point;
+                    return SMLineGetPointAtParameter(p1, p2, length / lineLength);
                 } else {
                     length -= lineLength;
                 }
@@ -242,21 +239,8 @@ CGFloat SMSplineGetTotalLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
     NSPoint p234  = MidPoint(p23, p34);
     NSPoint p1234 = MidPoint(p123, p234);
 	
-    // Try to approximate the full cubic curve by a single straight line
-	CGFloat dx = p4.x - p1.x;
-	CGFloat dy = p4.y - p1.y;
-	
-	CGFloat d2 = fabs(((p2.x - p4.x) * dy - (p2.y - p4.y) * dx));
-	CGFloat d3 = fabs(((p3.x - p4.x) * dy - (p3.y - p4.y) * dx));
-	
-	if((d2 + d3) * (d2 + d3) <= m_distance_tolerance * (dx * dx + dy * dy)) {
-		if (dx == 0.0f) {
-			return dy;
-		} else if (dy == 0.0f) {
-			return dx;
-		}
-		
-		return hypotf(dx, dy);
+	if (SMSplineIsLinear(p1, p2, p3, p4)) {
+		return SMLineGetLength(p1, p2);
     }
     
     // Continue subdivision
@@ -264,13 +248,57 @@ CGFloat SMSplineGetTotalLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
            SMSplineGetTotalLength(p1234, p234, p34, p4);
 }
 
+BOOL SMSplineIsLinear(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
+    // Try to approximate the full cubic curve by a single straight line
+	CGFloat dx = p4.x - p1.x;
+	CGFloat dy = p4.y - p1.y;
+	
+	CGFloat d2 = fabs(((p2.x - p4.x) * dy - (p2.y - p4.y) * dx));
+	CGFloat d3 = fabs(((p3.x - p4.x) * dy - (p3.y - p4.y) * dx));
+	
+	return (d2 + d3) * (d2 + d3) <= m_distance_tolerance * (dx * dx + dy * dy);
+}
+
+CGFloat SMLineGetLength(CGPoint p1, CGPoint p2) {
+    CGFloat dx = p2.x - p1.x;
+	CGFloat dy = p2.y - p1.y;
+	
+    if (dx == 0.0f) {
+        return dy;
+    } else if (dy == 0.0f) {
+        return dx;
+    }
+    
+    return hypotf(dx, dy);
+}
+
+CGPoint SMLineGetPointAtParameter(CGPoint p1, CGPoint p2, double u) {
+    CGFloat dx = p2.x - p1.x;
+    CGFloat dy = p2.y - p1.y;
+    
+    CGPoint point;
+    point.x = p1.x + dx * u;
+    point.y = p1.y + dy * u;
+    
+    return point;
+}
+
 double SMSplineParameterForLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat length) {
     if (length <= 0) {
         return 0.0;
     }
+    
+    if (SMSplineIsLinear(p1, p2, p3, p4)) {
+        double totalLength = SMLineGetLength(p1, p4);
+        if (totalLength == 0.0f) {
+            return 0.0;
+        }
+        return MAX(0.0, MIN(1.0, length / totalLength));
+    }
+    
     CGFloat totalLength = SMSplineGetTotalLength(p1, p2, p3, p4);
-    if (totalLength < 0.0001f) {
-        return 0.0f;
+    if (totalLength == 0.0f) {
+        return 0.0;
     }
     if (length >= totalLength) {
         return 1.0;
@@ -294,10 +322,10 @@ double SMSplineParameterForLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4
 }
 
 CGPoint SMSplineGetPointAtParameter(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, double u) {
-    if (u == 0.0) {
+    if (u <= 0.0) {
         return p1;
     }
-    if (u == 1.0) {
+    if (u >= 1.0) {
         return p4;
     }
     CGFloat b0 = SMSplineTerm1(u);
