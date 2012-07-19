@@ -59,7 +59,7 @@ void SubdivisionAddCurveDivision(NSBezierPath *path, NSPoint p1, NSPoint p2, NSP
 
                 start -= lineLength;
                 end -= lineLength;
-                previousPoint = p1;
+                previousPoint = p2;
             } break;
                 
             case NSCurveToBezierPathElement: {
