@@ -12,8 +12,6 @@
 
 @implementation NSBezierPath (Subdivision)
 
-void SubdivisionAddCurveDivision(NSBezierPath *path, NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat *start, CGFloat *end, BOOL *started);
-
 - (NSBezierPath *)subpathFromLength:(CGFloat)start toLength:(CGFloat)end {
     if (start >= end) {
 		return [NSBezierPath bezierPath];
@@ -68,8 +66,38 @@ void SubdivisionAddCurveDivision(NSBezierPath *path, NSPoint p1, NSPoint p2, NSP
                 CGPoint p3 = points[1];
                 CGPoint p4 = points[2];
                 
-                SubdivisionAddCurveDivision(subpath, p1, p2, p3, p4, &start, &end, &started);
+                double u1 = SMSplineParameterForLength(p1, p2, p3, p4, start);
+                double u2 = SMSplineParameterForLength(p1, p2, p3, p4, end);
                 
+                CGPoint sdp1 = p1;
+                CGPoint sdp2 = p2;
+                CGPoint sdp3 = p3;
+                CGPoint sdp4 = p4;
+                
+                // check to remove a part at the beginning of the current curve element
+                if (u1 > 0.0) {
+                    SMSplineGetSubdivisionAtParameter(sdp1, sdp2, sdp3, sdp4, u1, NO,
+                                                      &sdp1, &sdp2, &sdp3, &sdp4);
+                    [subpath moveToPoint:sdp1];
+                    started = YES;
+                }
+                if (!started) {
+                    [subpath moveToPoint:sdp1];
+                    started = YES;
+                }
+                
+                // check to remove a part at the end of the current curve element
+                if (u2 < 1.0) {
+                    SMSplineGetSubdivisionAtParameter(sdp1, sdp2, sdp3, sdp4, (u2 - u1) / (1 - u1), YES,
+                                                      &sdp1, &sdp2, &sdp3, &sdp4);
+                    started = NO;
+                }
+                
+                [subpath curveToPoint:sdp4 controlPoint1:sdp2 controlPoint2:sdp3];
+                
+                CGFloat curveLength = SMSplineGetTotalLength(p1, p2, p3, p4);
+                start -= curveLength;
+                end -= curveLength;
                 previousPoint = p4;
             } break;
                 
@@ -146,66 +174,6 @@ void SubdivisionAddCurveDivision(NSBezierPath *path, NSPoint p1, NSPoint p2, NSP
         }
     }
     return previousPoint;
-}
-
-
-
-CGFloat const length_tolerance = 0.001f;
-
-void SubdivisionAddCurveDivision(NSBezierPath *path,
-                                 NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4,
-                                 CGFloat *start, CGFloat *end, BOOL *started) {
-	if ((*start) >= (*end) || (*end) <= 0) {
-		return;
-	}
-    
-    // cacluclate length of the spline
-    CGFloat length = SMSplineGetTotalLength(p1, p2, p3, p4);
-    
-    // if the length smaller than the tolerance
-    if (length <= length_tolerance) {
-        *start -= length;
-        *end -= length;
-        return;
-    }
-    if ((*start) <= 0 && length < (*end)) {
-        // Add complete spline because the spline is in between start and end
-        if (!(*started)) {
-            *started = YES;
-            [path moveToPoint:p1];
-        }
-        [path curveToPoint:p4 controlPoint1:p2 controlPoint2:p3];
-        
-        *start -= length;
-        *end -= length;
-        return;
-    }
-    
-    // Spline is before start
-    if (*start >= length) {
-        *start -= length;
-        *end -= length;
-        return;
-    }
-
-	
-	// Calculate all the mid-points of the line segments
-    NSPoint p12   = MidPoint(p1, p2);
-    NSPoint p23   = MidPoint(p2, p3);
-    NSPoint p34   = MidPoint(p3, p4);
-    NSPoint p123  = MidPoint(p12, p23);
-    NSPoint p234  = MidPoint(p23, p34);
-    NSPoint p1234 = MidPoint(p123, p234);
-	
-    // add first part if possible
-    SubdivisionAddCurveDivision(path, p1, p12, p123, p1234, start, end, started); 
-	
-	if ((*end) <= 0) {
-		return;
-	}
-	
-    // add second part if possible
-    SubdivisionAddCurveDivision(path, p1234, p234, p34, p4, start, end, started); 
 }
 
 @end

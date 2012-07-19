@@ -232,7 +232,7 @@ typedef struct {
 	subpath.lineWidth = 0.0f;
 	[subpath stroke];
     
-    [self drawCurveSubdivisions:self.path];
+//    [self drawCurveSubdivisions:self.path];
 	
 	CGFloat dashPattern[2];
 	dashPattern[0] = 5.0f;

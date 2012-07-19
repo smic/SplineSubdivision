@@ -8,6 +8,7 @@
 
 #import "SplineDivisionAppDelegate.h"
 #import "SplineDivisionView.h"
+#import "NSBezierPath+Subdivision.h"
 
 
 @interface SplineDivisionAppDelegate ()
@@ -113,6 +114,10 @@
             break;
     }
     return nil;
+}
+
+- (IBAction)replaceWithSubpath:(id)sender {
+    self.splineDivisionView.path = [self.splineDivisionView.path subpathFromLength:self.splineDivisionView.pathStart toLength:self.splineDivisionView.pathEnd];
 }
 
 @end

@@ -10,8 +10,8 @@
 
 
 NSPoint MidPoint(NSPoint p1, NSPoint p2) {
-	return NSMakePoint((p1.x + p2.x) / 2.0f,
-                       (p1.y + p2.y) / 2.0f);
+	return NSMakePoint((p1.x + p2.x) * 0.5f,
+                       (p1.y + p2.y) * 0.5f);
 }
 
 // see http://www.antigrain.com/research/adaptive_bezier/index.html
@@ -19,7 +19,7 @@ NSPoint MidPoint(NSPoint p1, NSPoint p2) {
 CGFloat const m_distance_tolerance = 0.5f;
 
 CGFloat SMSplineGetTotalLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
-	
+	// Try to approximate the full cubic curve by a single straight line
 	if (SMSplineIsLinear(p1, p2, p3, p4)) {
 		return SMLineGetLength(p1, p4);
     }
@@ -38,7 +38,7 @@ CGFloat SMSplineGetTotalLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
 }
 
 BOOL SMSplineIsLinear(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
-    // Try to approximate the full cubic curve by a single straight line
+    
 	CGFloat dx = p4.x - p1.x;
 	CGFloat dy = p4.y - p1.y;
 	
@@ -62,14 +62,14 @@ CGFloat SMLineGetLength(CGPoint p1, CGPoint p2) {
 }
 
 CGPoint SMLineGetPointAtParameter(CGPoint p1, CGPoint p2, double u) {
-    CGFloat dx = p2.x - p1.x;
-    CGFloat dy = p2.y - p1.y;
-    
-    CGPoint point;
-    point.x = p1.x + dx * u;
-    point.y = p1.y + dy * u;
-    
-    return point;
+    if (u <= 0.0) {
+        return p1;
+    }
+    if (u >= 1.0) {
+        return p2;
+    }
+    return CGPointMake(p1.x + (p2.x - p1.x) * u,
+                       p1.y + (p2.y - p1.y) * u);
 }
 
 double SMSplineParameterForLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat length) {
@@ -128,20 +128,70 @@ CGPoint SMSplineGetPointAtParameter(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint 
     return point;
 }
 
+void SMSplineGetSubdivisionAtParameter(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, double u, BOOL first, NSPoint *sdp1, NSPoint *sdp2, NSPoint *sdp3, NSPoint *sdp4) {
+    if (u <= 0.0) {
+        if (first) {
+            *sdp1 = p1;
+            *sdp2 = p1;
+            *sdp3 = p1;
+            *sdp4 = p1;
+        } else {
+            *sdp1 = p1;
+            *sdp2 = p2;
+            *sdp3 = p3;
+            *sdp4 = p4;
+        }
+        return;
+    }
+    if (u >= 1.0) {
+        if (first) {
+            *sdp1 = p1;
+            *sdp2 = p2;
+            *sdp3 = p3;
+            *sdp4 = p4;
+        } else {
+            *sdp1 = p4;
+            *sdp2 = p4;
+            *sdp3 = p4;
+            *sdp4 = p4;
+        }
+    }
+    
+    // calculate parameterized point on the lines
+    NSPoint p12   = SMLineGetPointAtParameter(p1, p2, u);
+    NSPoint p23   = SMLineGetPointAtParameter(p2, p3, u);
+    NSPoint p34   = SMLineGetPointAtParameter(p3, p4, u);
+    NSPoint p123  = SMLineGetPointAtParameter(p12, p23, u);
+    NSPoint p234  = SMLineGetPointAtParameter(p23, p34, u);
+    NSPoint p1234 = SMLineGetPointAtParameter(p123, p234, u);
+    
+    if (first) {
+        *sdp1 = p1;
+        *sdp2 = p12;
+        *sdp3 = p123;
+        *sdp4 = p1234;
+    } else {
+        *sdp1 = p1234;
+        *sdp2 = p234;
+        *sdp3 = p34;
+        *sdp4 = p4;
+    }
+}
+
 // Bezier multipliers
 CGFloat SMSplineTerm1(CGFloat u) {
-    CGFloat tmp = 1.0 - u;
+    CGFloat tmp = 1.0f - u;
     return (tmp * tmp * tmp);
 }
 
 CGFloat SMSplineTerm2(CGFloat u) {
-    CGFloat tmp = 1.0 - u;
-    return (3 * u * (tmp * tmp));
+    CGFloat tmp = 1.0f - u;
+    return (3.0f * u * (tmp * tmp));
 }
 
 CGFloat SMSplineTerm3(CGFloat u) {
-    CGFloat tmp = 1.0 - u;
-    return (3 * u * u * tmp);
+    CGFloat tmp = 1.0f - u;
+    return (3.0f * u * u * tmp);
 }
 
 CGFloat SMSplineTerm4(CGFloat u) {
