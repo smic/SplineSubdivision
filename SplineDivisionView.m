@@ -8,6 +8,7 @@
 
 #import "SplineDivisionView.h"
 #import "NSBezierPath+Subdivision.h"
+#import "SMGeometry.h"
 
 
 static char SplineDivisionViewObservationContext;
@@ -230,6 +231,8 @@ typedef struct {
 	[[NSColor colorWithDeviceRed:30.0f/255.0f green:60.0f/55.0f blue:75.0f/255.0f alpha:0.8f] set];
 	subpath.lineWidth = 0.0f;
 	[subpath stroke];
+    
+    [self drawCurveSubdivisions:self.path];
 	
 	CGFloat dashPattern[2];
 	dashPattern[0] = 5.0f;
@@ -331,11 +334,89 @@ typedef struct {
     NSFrameRect(rect);
 }
 
+static NSUInteger subdivisionIndex;
+
+- (void)drawCurveSubdivisions:(NSBezierPath *)path {
+    subdivisionIndex = 0;
+    
+    NSPoint points[3];
+    BOOL started = NO;
+    NSPoint previousPoint;
+    for (NSUInteger elementIndex = 0; elementIndex < [path elementCount]; elementIndex++) {
+        
+        NSBezierPathElement element = [path elementAtIndex:(NSInteger)elementIndex associatedPoints:points];
+        switch (element) {
+            case NSMoveToBezierPathElement: {
+                started = NO;
+                previousPoint = points[0];
+            } break;
+                
+            case NSLineToBezierPathElement: {
+                NSPoint p1 = previousPoint;
+                NSPoint p2 = points[0];
+                
+                [self drawLinearSubdivisionWithP1:p1 p2:p2];
+                
+                previousPoint = p2;
+            } break;
+                
+            case NSCurveToBezierPathElement: {
+                CGPoint p1 = previousPoint;
+                CGPoint p2 = points[0];
+                CGPoint p3 = points[1];
+                CGPoint p4 = points[2];
+                
+                [self drawCurveSubdivisionsWithP1:p1 p2:p2 p3:p3 p4:p4];
+                
+                previousPoint = p4;
+            } break;
+                
+            case NSClosePathBezierPathElement: {
+                started = NO;
+            } break;
+                
+            default:
+                break;
+        }
+    }
+}
+
+- (void)drawCurveSubdivisionsWithP1:(CGPoint)p1 p2:(CGPoint)p2 p3:(CGPoint)p3 p4:(CGPoint)p4 {
+    if (SMSplineIsLinear(p1, p2, p3, p4)) {
+        [self drawLinearSubdivisionWithP1:p1 p2:p4];
+        return;
+    }
+    
+    // Calculate all the mid-points of the line segments
+    NSPoint p12   = MidPoint(p1, p2);
+    NSPoint p23   = MidPoint(p2, p3);
+    NSPoint p34   = MidPoint(p3, p4);
+    NSPoint p123  = MidPoint(p12, p23);
+    NSPoint p234  = MidPoint(p23, p34);
+    NSPoint p1234 = MidPoint(p123, p234);
+    
+    // Continue subdivision
+    [self drawCurveSubdivisionsWithP1:p1 p2:p12 p3:p123 p4:p1234];
+    [self drawCurveSubdivisionsWithP1:p1234 p2:p234 p3:p34 p4:p4];
+}
+
+- (void)drawLinearSubdivisionWithP1:(CGPoint)p1 p2:(CGPoint)p2 {
+    if (subdivisionIndex % 2 == 0) {
+        [[NSColor redColor] set];
+    } else {
+        [[NSColor greenColor] set];
+    }
+    
+    [NSBezierPath strokeLineFromPoint:p1 toPoint:p2];
+    
+    subdivisionIndex++;
+}
+
 #pragma mark - KVO
 
--(void)observeValueForKeyPath:(NSString *)keyPath 
-                     ofObject:(id)object 
-                       change:(NSDictionary *)change 
+-(void)observeValueForKeyPath:(NSString *)keyPath
+                     ofObject:(id)object
+                       change:(NSDictionary *)change
                       context:(void *)context {
     if (context != &SplineDivisionViewObservationContext) {
         [super observeValueForKeyPath:keyPath 
