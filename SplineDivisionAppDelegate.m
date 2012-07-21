@@ -110,6 +110,13 @@
             return path;
         } break;
             
+        case 6: {
+            NSBezierPath *path = [NSBezierPath bezierPath];
+            [path appendBezierPathWithOvalInRect:NSMakeRect(150, 100, 100, 100)];
+            [path appendBezierPathWithOvalInRect:NSMakeRect(200, 100, 100, 100)];
+            return path;
+        } break;
+            
         default:
             break;
     }
