@@ -7,7 +7,8 @@
 //
 
 #import "NSBezierPath+SMSubdivision.h"
-#import "SMGeometry.h"
+#import "SMLineGeometry.h"
+#import "SMSplineGeometry.h"
 
 
 @implementation NSBezierPath (SMSubdivision)

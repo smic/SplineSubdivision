@@ -9,11 +9,6 @@
 #import <Foundation/Foundation.h>
 
 
-NSPoint SMLineGetMidPoint(NSPoint p1, NSPoint p2);
-CGPoint SMLineGetPointAtParameter(NSPoint p1, NSPoint p2, double u);
-CGFloat SMLineGetLength(CGPoint p1, CGPoint p2);
-CGPoint SMLineGetPointAtParameter(CGPoint p1, CGPoint p2, double u);
-
 CGFloat SMSplineGetTotalLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4);
 BOOL SMSplineIsLinear(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4);
 double SMSplineParameterForLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat length);

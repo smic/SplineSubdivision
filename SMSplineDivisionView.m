@@ -8,7 +8,8 @@
 
 #import "SMSplineDivisionView.h"
 #import "NSBezierPath+SMSubdivision.h"
-#import "SMGeometry.h"
+#import "SMLineGeometry.h"
+#import "SMSplineGeometry.h"
 
 
 static char SMSplineDivisionViewObservationContext;
