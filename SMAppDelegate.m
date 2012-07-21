@@ -1,19 +1,19 @@
 //
-//  SplineDivisionAppDelegate.m
+//  SMAppDelegate.m
 //  SplineSubdivision
 //
 //  Created by Stephan Michels on 03.09.10.
 //  Copyright (c) 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
 //
 
-#import "SplineDivisionAppDelegate.h"
-#import "SplineDivisionView.h"
-#import "NSBezierPath+Subdivision.h"
+#import "SMAppDelegate.h"
+#import "SMSplineDivisionView.h"
+#import "NSBezierPath+SMSubdivision.h"
 
 
-@interface SplineDivisionAppDelegate () <SplineDivisionViewDelegate>
+@interface SMAppDelegate () <SMSplineDivisionViewDelegate>
 
-@property (nonatomic, retain) IBOutlet SplineDivisionView *splineDivisionView;
+@property (nonatomic, retain) IBOutlet SMSplineDivisionView *splineDivisionView;
 @property (assign) IBOutlet NSSlider *startSlider;
 @property (assign) IBOutlet NSSlider *endSlider;
 @property (assign) IBOutlet NSSlider *probeSlider;
@@ -21,7 +21,7 @@
 @end
 
 
-@implementation SplineDivisionAppDelegate
+@implementation SMAppDelegate
 
 @synthesize splineDivisionView = _splineDivisionView;
 @synthesize startSlider = _startSlider;
@@ -142,7 +142,7 @@
 
 #pragma mark - Spline division view delegate
 
-- (void)splineDivisionViewDidChangePath:(SplineDivisionView *)view {
+- (void)splineDivisionViewDidChangePath:(SMSplineDivisionView *)view {
     CGFloat length = [self.splineDivisionView.path length];
     self.startSlider.maxValue = length;
     self.endSlider.maxValue = length;

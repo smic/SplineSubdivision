@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
 //
 
-#import "NSBezierPath+Subdivision.h"
+#import "NSBezierPath+SMSubdivision.h"
 #import "SMGeometry.h"
 
 
-@implementation NSBezierPath (Subdivision)
+@implementation NSBezierPath (SMSubdivision)
 
 - (NSBezierPath *)subpathFromLength:(CGFloat)start toLength:(CGFloat)end {
     if (start >= end) {

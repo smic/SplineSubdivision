@@ -1,24 +1,24 @@
 //
-//  SplineDivisionView.m
+//  SMSplineDivisionView.m
 //  SplineSubdivision
 //
 //  Created by Stephan Michels on 03.09.10.
 //  Copyright (c) 2012 Stephan Michels Softwareentwicklung und Beratung. All rights reserved.
 //
 
-#import "SplineDivisionView.h"
-#import "NSBezierPath+Subdivision.h"
+#import "SMSplineDivisionView.h"
+#import "NSBezierPath+SMSubdivision.h"
 #import "SMGeometry.h"
 
 
-static char SplineDivisionViewObservationContext;
+static char SMSplineDivisionViewObservationContext;
 
 typedef struct {
     NSUInteger elementIndex;
     NSUInteger pointIndex;
 } PathPoint;
 
-@interface SplineDivisionView ()
+@interface SMSplineDivisionView ()
 
 - (NSUInteger)numberOfPointsForElement:(NSBezierPathElement)element;
 - (PathPoint)pathPointUnderMouse:(NSPoint)point;
@@ -27,7 +27,7 @@ typedef struct {
 @end
 
 
-@implementation SplineDivisionView
+@implementation SMSplineDivisionView
 
 @synthesize path = _path;
 @synthesize pathStart = _pathStart;
@@ -52,19 +52,19 @@ typedef struct {
         [self addObserver:self 
                forKeyPath:@"path" 
                   options:(NSKeyValueObservingOptionNew) 
-                  context:&SplineDivisionViewObservationContext];
+                  context:&SMSplineDivisionViewObservationContext];
         [self addObserver:self 
                forKeyPath:@"pathStart" 
                   options:(NSKeyValueObservingOptionNew) 
-                  context:&SplineDivisionViewObservationContext];
+                  context:&SMSplineDivisionViewObservationContext];
         [self addObserver:self
                forKeyPath:@"pathEnd" 
                   options:(NSKeyValueObservingOptionNew) 
-                  context:&SplineDivisionViewObservationContext];
+                  context:&SMSplineDivisionViewObservationContext];
         [self addObserver:self
                forKeyPath:@"probe"
                   options:(NSKeyValueObservingOptionNew)
-                  context:&SplineDivisionViewObservationContext];
+                  context:&SMSplineDivisionViewObservationContext];
     }
     return self;
 }
@@ -73,16 +73,16 @@ typedef struct {
     // remove observer for properties
     [self removeObserver:self 
               forKeyPath:@"path" 
-                 context:&SplineDivisionViewObservationContext];
+                 context:&SMSplineDivisionViewObservationContext];
     [self removeObserver:self 
               forKeyPath:@"pathStart" 
-                 context:&SplineDivisionViewObservationContext];
+                 context:&SMSplineDivisionViewObservationContext];
     [self removeObserver:self
               forKeyPath:@"pathEnd" 
-                 context:&SplineDivisionViewObservationContext];
+                 context:&SMSplineDivisionViewObservationContext];
     [self removeObserver:self
               forKeyPath:@"probe"
-                 context:&SplineDivisionViewObservationContext];
+                 context:&SMSplineDivisionViewObservationContext];
     
 	self.path = nil;
     
@@ -425,7 +425,7 @@ static NSUInteger subdivisionIndex;
                      ofObject:(id)object
                        change:(NSDictionary *)change
                       context:(void *)context {
-    if (context != &SplineDivisionViewObservationContext) {
+    if (context != &SMSplineDivisionViewObservationContext) {
         [super observeValueForKeyPath:keyPath 
                              ofObject:object 
                                change:change 

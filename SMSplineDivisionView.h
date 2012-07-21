@@ -1,5 +1,5 @@
 //
-//  SplineDivisionView.h
+//  SMSplineDivisionView.h
 //  SplineSubdivision
 //
 //  Created by Stephan Michels on 03.09.10.
@@ -9,20 +9,20 @@
 #import <Cocoa/Cocoa.h>
 
 
-@protocol SplineDivisionViewDelegate;
+@protocol SMSplineDivisionViewDelegate;
 
-@interface SplineDivisionView : NSView
+@interface SMSplineDivisionView : NSView
 
 @property (nonatomic, retain) NSBezierPath *path;
 @property (nonatomic, assign) CGFloat pathStart;
 @property (nonatomic, assign) CGFloat pathEnd;
 @property (nonatomic, assign) CGFloat probe;
-@property (nonatomic, assign) id<SplineDivisionViewDelegate> delegate;
+@property (nonatomic, assign) id<SMSplineDivisionViewDelegate> delegate;
 
 @end
 
-@protocol SplineDivisionViewDelegate <NSObject>
+@protocol SMSplineDivisionViewDelegate <NSObject>
 
-- (void)splineDivisionViewDidChangePath:(SplineDivisionView *)view;
+- (void)splineDivisionViewDidChangePath:(SMSplineDivisionView *)view;
 
 @end

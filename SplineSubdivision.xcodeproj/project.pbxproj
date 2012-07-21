@@ -11,10 +11,10 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		D442F5C014B5CC7800FB8FD0 /* NSBezierPath+Subdivision.m in Sources */ = {isa = PBXBuildFile; fileRef = D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+Subdivision.m */; };
+		D442F5C014B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m in Sources */ = {isa = PBXBuildFile; fileRef = D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m */; };
 		D4A4559A15B81048008C39C3 /* SMGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A4559915B81048008C39C3 /* SMGeometry.m */; };
-		D4E4E3D41230CF27003B59EA /* SplineDivisionView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E4E3D31230CF27003B59EA /* SplineDivisionView.m */; };
-		D4E4E3E31230D3CC003B59EA /* SplineDivisionAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E4E3E21230D3CC003B59EA /* SplineDivisionAppDelegate.m */; };
+		D4E4E3D41230CF27003B59EA /* SMSplineDivisionView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E4E3D31230CF27003B59EA /* SMSplineDivisionView.m */; };
+		D4E4E3E31230D3CC003B59EA /* SMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E4E3E21230D3CC003B59EA /* SMAppDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,14 +28,14 @@
 		32CA4F630368D1EE00C91783 /* SplineSubdivision_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplineSubdivision_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* SplineSubdivision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplineSubdivision.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D442F5BE14B5CC7800FB8FD0 /* NSBezierPath+Subdivision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBezierPath+Subdivision.h"; sourceTree = "<group>"; };
-		D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+Subdivision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBezierPath+Subdivision.m"; sourceTree = "<group>"; };
+		D442F5BE14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBezierPath+SMSubdivision.h"; sourceTree = "<group>"; };
+		D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBezierPath+SMSubdivision.m"; sourceTree = "<group>"; };
 		D4A4559815B81048008C39C3 /* SMGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMGeometry.h; sourceTree = "<group>"; };
 		D4A4559915B81048008C39C3 /* SMGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMGeometry.m; sourceTree = "<group>"; };
-		D4E4E3D21230CF27003B59EA /* SplineDivisionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplineDivisionView.h; sourceTree = "<group>"; };
-		D4E4E3D31230CF27003B59EA /* SplineDivisionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplineDivisionView.m; sourceTree = "<group>"; };
-		D4E4E3E11230D3CC003B59EA /* SplineDivisionAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplineDivisionAppDelegate.h; sourceTree = "<group>"; };
-		D4E4E3E21230D3CC003B59EA /* SplineDivisionAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplineDivisionAppDelegate.m; sourceTree = "<group>"; };
+		D4E4E3D21230CF27003B59EA /* SMSplineDivisionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMSplineDivisionView.h; sourceTree = "<group>"; };
+		D4E4E3D31230CF27003B59EA /* SMSplineDivisionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMSplineDivisionView.m; sourceTree = "<group>"; };
+		D4E4E3E11230D3CC003B59EA /* SMAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMAppDelegate.h; sourceTree = "<group>"; };
+		D4E4E3E21230D3CC003B59EA /* SMAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMAppDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,14 +53,14 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D442F5BE14B5CC7800FB8FD0 /* NSBezierPath+Subdivision.h */,
-				D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+Subdivision.m */,
+				D442F5BE14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.h */,
+				D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m */,
 				D4A4559815B81048008C39C3 /* SMGeometry.h */,
 				D4A4559915B81048008C39C3 /* SMGeometry.m */,
-				D4E4E3D21230CF27003B59EA /* SplineDivisionView.h */,
-				D4E4E3D31230CF27003B59EA /* SplineDivisionView.m */,
-				D4E4E3E11230D3CC003B59EA /* SplineDivisionAppDelegate.h */,
-				D4E4E3E21230D3CC003B59EA /* SplineDivisionAppDelegate.m */,
+				D4E4E3D21230CF27003B59EA /* SMSplineDivisionView.h */,
+				D4E4E3D31230CF27003B59EA /* SMSplineDivisionView.m */,
+				D4E4E3E11230D3CC003B59EA /* SMAppDelegate.h */,
+				D4E4E3E21230D3CC003B59EA /* SMAppDelegate.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -194,9 +194,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				D4E4E3D41230CF27003B59EA /* SplineDivisionView.m in Sources */,
-				D4E4E3E31230D3CC003B59EA /* SplineDivisionAppDelegate.m in Sources */,
-				D442F5C014B5CC7800FB8FD0 /* NSBezierPath+Subdivision.m in Sources */,
+				D4E4E3D41230CF27003B59EA /* SMSplineDivisionView.m in Sources */,
+				D4E4E3E31230D3CC003B59EA /* SMAppDelegate.m in Sources */,
+				D442F5C014B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m in Sources */,
 				D4A4559A15B81048008C39C3 /* SMGeometry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

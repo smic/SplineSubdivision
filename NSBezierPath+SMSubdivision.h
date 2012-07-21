@@ -8,7 +8,7 @@
 
 #import <AppKit/AppKit.h>
 
-@interface NSBezierPath (Subdivision)
+@interface NSBezierPath (SMSubdivision)
 
 - (NSBezierPath *)subpathFromLength:(CGFloat)start toLength:(CGFloat)end;
 - (CGPoint)pointAtLength:(CGFloat)length;

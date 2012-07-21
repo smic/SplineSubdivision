@@ -1,5 +1,5 @@
 //
-//  SplineDivisionAppDelegate.h
+//  SMAppDelegate.h
 //  SplineSubdivision
 //
 //  Created by Stephan Michels on 03.09.10.
@@ -9,6 +9,6 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface SplineDivisionAppDelegate : NSObject <NSApplicationDelegate>
+@interface SMAppDelegate : NSObject <NSApplicationDelegate>
 
 @end
