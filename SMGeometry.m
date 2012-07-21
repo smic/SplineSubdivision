@@ -9,9 +9,37 @@
 #import "SMGeometry.h"
 
 
-NSPoint MidPoint(NSPoint p1, NSPoint p2) {
+CGFloat SMLineGetLength(CGPoint p1, CGPoint p2) {
+    CGFloat dx = p2.x - p1.x;
+	CGFloat dy = p2.y - p1.y;
+	
+    if (dx == 0.0f) {
+        return dy;
+    } else if (dy == 0.0f) {
+        return dx;
+    }
+    
+    return hypotf(dx, dy);
+}
+
+NSPoint SMLineGetMidPoint(NSPoint p1, NSPoint p2) {
 	return NSMakePoint((p1.x + p2.x) * 0.5f,
                        (p1.y + p2.y) * 0.5f);
+}
+
+CGPoint SMLineGetPointAtParameter(CGPoint p1, CGPoint p2, double u) {
+    if (u <= 0.0) {
+        return p1;
+    }
+    if (u >= 1.0) {
+        return p2;
+    }
+    if (u == 0.5) {
+        return NSMakePoint((p1.x + p2.x) * 0.5f,
+                           (p1.y + p2.y) * 0.5f);
+    }
+    return CGPointMake(p1.x + (p2.x - p1.x) * u,
+                       p1.y + (p2.y - p1.y) * u);
 }
 
 // see http://www.antigrain.com/research/adaptive_bezier/index.html
@@ -25,12 +53,12 @@ CGFloat SMSplineGetTotalLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
     }
     
     // Calculate all the mid-points of the line segments
-    NSPoint p12   = MidPoint(p1, p2);
-    NSPoint p23   = MidPoint(p2, p3);
-    NSPoint p34   = MidPoint(p3, p4);
-    NSPoint p123  = MidPoint(p12, p23);
-    NSPoint p234  = MidPoint(p23, p34);
-    NSPoint p1234 = MidPoint(p123, p234);
+    NSPoint p12   = SMLineGetMidPoint(p1, p2);
+    NSPoint p23   = SMLineGetMidPoint(p2, p3);
+    NSPoint p34   = SMLineGetMidPoint(p3, p4);
+    NSPoint p123  = SMLineGetMidPoint(p12, p23);
+    NSPoint p234  = SMLineGetMidPoint(p23, p34);
+    NSPoint p1234 = SMLineGetMidPoint(p123, p234);
     
     // Continue subdivision
     return SMSplineGetTotalLength(p1, p12, p123, p1234) +
@@ -46,30 +74,6 @@ BOOL SMSplineIsLinear(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4) {
 	CGFloat d3 = fabs(((p3.x - p4.x) * dy - (p3.y - p4.y) * dx));
 	
 	return (d2 + d3) * (d2 + d3) <= m_distance_tolerance * (dx * dx + dy * dy);
-}
-
-CGFloat SMLineGetLength(CGPoint p1, CGPoint p2) {
-    CGFloat dx = p2.x - p1.x;
-	CGFloat dy = p2.y - p1.y;
-	
-    if (dx == 0.0f) {
-        return dy;
-    } else if (dy == 0.0f) {
-        return dx;
-    }
-    
-    return hypotf(dx, dy);
-}
-
-CGPoint SMLineGetPointAtParameter(CGPoint p1, CGPoint p2, double u) {
-    if (u <= 0.0) {
-        return p1;
-    }
-    if (u >= 1.0) {
-        return p2;
-    }
-    return CGPointMake(p1.x + (p2.x - p1.x) * u,
-                       p1.y + (p2.y - p1.y) * u);
 }
 
 double SMSplineParameterForLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4, CGFloat length) {
@@ -93,12 +97,12 @@ double SMSplineParameterForLength(NSPoint p1, NSPoint p2, NSPoint p3, NSPoint p4
         return 1.0;
     }
     
-    NSPoint p12   = MidPoint(p1, p2);
-    NSPoint p23   = MidPoint(p2, p3);
-    NSPoint p34   = MidPoint(p3, p4);
-    NSPoint p123  = MidPoint(p12, p23);
-    NSPoint p234  = MidPoint(p23, p34);
-    NSPoint p1234 = MidPoint(p123, p234);
+    NSPoint p12   = SMLineGetMidPoint(p1, p2);
+    NSPoint p23   = SMLineGetMidPoint(p2, p3);
+    NSPoint p34   = SMLineGetMidPoint(p3, p4);
+    NSPoint p123  = SMLineGetMidPoint(p12, p23);
+    NSPoint p234  = SMLineGetMidPoint(p23, p34);
+    NSPoint p1234 = SMLineGetMidPoint(p123, p234);
     
     CGFloat halfLength = SMSplineGetTotalLength(p1, p12, p123, p1234);
     if (halfLength == length) {

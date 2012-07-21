@@ -388,12 +388,12 @@ static NSUInteger subdivisionIndex;
     }
     
     // Calculate all the mid-points of the line segments
-    NSPoint p12   = MidPoint(p1, p2);
-    NSPoint p23   = MidPoint(p2, p3);
-    NSPoint p34   = MidPoint(p3, p4);
-    NSPoint p123  = MidPoint(p12, p23);
-    NSPoint p234  = MidPoint(p23, p34);
-    NSPoint p1234 = MidPoint(p123, p234);
+    NSPoint p12   = SMLineGetMidPoint(p1, p2);
+    NSPoint p23   = SMLineGetMidPoint(p2, p3);
+    NSPoint p34   = SMLineGetMidPoint(p3, p4);
+    NSPoint p123  = SMLineGetMidPoint(p12, p23);
+    NSPoint p234  = SMLineGetMidPoint(p23, p34);
+    NSPoint p1234 = SMLineGetMidPoint(p123, p234);
     
     // Continue subdivision
     [self drawCurveSubdivisionsWithP1:p1 p2:p12 p3:p123 p4:p1234];
