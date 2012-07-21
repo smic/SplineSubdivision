@@ -13,11 +13,11 @@
 
 @interface SMSplineDivisionView : NSView
 
-@property (nonatomic, retain) NSBezierPath *path;
-@property (nonatomic, assign) CGFloat pathStart;
-@property (nonatomic, assign) CGFloat pathEnd;
-@property (nonatomic, assign) CGFloat probe;
-@property (nonatomic, assign) id<SMSplineDivisionViewDelegate> delegate;
+@property (nonatomic, strong) NSBezierPath *path;
+@property (nonatomic) CGFloat pathStart;
+@property (nonatomic) CGFloat pathEnd;
+@property (nonatomic) CGFloat probe;
+@property (nonatomic, weak) id<SMSplineDivisionViewDelegate> delegate;
 
 @end
 

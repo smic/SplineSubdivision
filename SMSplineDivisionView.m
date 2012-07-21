@@ -43,9 +43,9 @@ typedef struct {
         // Initialization code here.
         
         // add tracking area to get mouse events
-        NSTrackingArea *trackingArea = [[[NSTrackingArea alloc] initWithRect:frame
-                                                                     options:(NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveInKeyWindow )
-                                                                       owner:self userInfo:nil] autorelease];
+        NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame
+                                                                    options:(NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveInKeyWindow )
+                                                                      owner:self userInfo:nil];
 		[self addTrackingArea:trackingArea];
         
         // add observer for properties
@@ -83,10 +83,6 @@ typedef struct {
     [self removeObserver:self
               forKeyPath:@"probe"
                  context:&SMSplineDivisionViewObservationContext];
-    
-	self.path = nil;
-    
-	[super dealloc];
 }
 
 #pragma mark - User interaction

@@ -13,10 +13,10 @@
 
 @interface SMAppDelegate () <SMSplineDivisionViewDelegate>
 
-@property (nonatomic, retain) IBOutlet SMSplineDivisionView *splineDivisionView;
-@property (assign) IBOutlet NSSlider *startSlider;
-@property (assign) IBOutlet NSSlider *endSlider;
-@property (assign) IBOutlet NSSlider *probeSlider;
+@property (nonatomic, weak) IBOutlet SMSplineDivisionView *splineDivisionView;
+@property (nonatomic, weak) IBOutlet NSSlider *startSlider;
+@property (nonatomic, weak) IBOutlet NSSlider *endSlider;
+@property (nonatomic, weak) IBOutlet NSSlider *probeSlider;
 
 @end
 
@@ -27,14 +27,6 @@
 @synthesize startSlider = _startSlider;
 @synthesize endSlider = _endSlider;
 @synthesize probeSlider = _probeSlider;
-
-#pragma mark - Initialization / Deallocation
-
-- (void)dealloc {
-    self.splineDivisionView = nil;
-    
-    [super dealloc];
-}
 
 #pragma mark - Application delegate
 
