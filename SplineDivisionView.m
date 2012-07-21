@@ -33,6 +33,7 @@ typedef struct {
 @synthesize pathStart = _pathStart;
 @synthesize pathEnd = _pathEnd;
 @synthesize probe = _probe;
+@synthesize delegate = _delegate;
 
 #pragma mark - Initialization / Deallocation
 
@@ -144,6 +145,10 @@ typedef struct {
 		CGFloat dx = currentPoint.x-point.x;
 		CGFloat dy = currentPoint.y-point.y;
         
+        if (dx == 0.0f && dy == 0.0f) {
+            continue;
+        }
+        
         NSPoint points[3];
         NSBezierPathElement element = [self.path elementAtIndex:(NSInteger)selectedPathPoint.elementIndex associatedPoints:points];
         
@@ -174,6 +179,8 @@ typedef struct {
         }
 
 		point = currentPoint;
+        
+        [self.delegate splineDivisionViewDidChangePath:self];
         
         [self setNeedsDisplay:YES];
 	}
@@ -427,6 +434,7 @@ static NSUInteger subdivisionIndex;
     }
     
     if ([keyPath isEqualToString:@"path"]) {
+        [self.delegate splineDivisionViewDidChangePath:self];
         [self setNeedsDisplay:YES];
     } else if ([keyPath isEqualToString:@"pathStart"]) {
         [self setNeedsDisplay:YES];

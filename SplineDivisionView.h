@@ -9,11 +9,20 @@
 #import <Cocoa/Cocoa.h>
 
 
+@protocol SplineDivisionViewDelegate;
+
 @interface SplineDivisionView : NSView
 
 @property (nonatomic, retain) NSBezierPath *path;
 @property (nonatomic, assign) CGFloat pathStart;
 @property (nonatomic, assign) CGFloat pathEnd;
 @property (nonatomic, assign) CGFloat probe;
+@property (nonatomic, assign) id<SplineDivisionViewDelegate> delegate;
+
+@end
+
+@protocol SplineDivisionViewDelegate <NSObject>
+
+- (void)splineDivisionViewDidChangePath:(SplineDivisionView *)view;
 
 @end

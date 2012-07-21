@@ -12,5 +12,6 @@
 
 - (NSBezierPath *)subpathFromLength:(CGFloat)start toLength:(CGFloat)end;
 - (CGPoint)pointAtLength:(CGFloat)length;
+- (CGFloat)length;
 
 @end

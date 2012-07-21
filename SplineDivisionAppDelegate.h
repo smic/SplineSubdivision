@@ -9,15 +9,6 @@
 #import <Cocoa/Cocoa.h>
 
 
-@class SplineDivisionView;
-
 @interface SplineDivisionAppDelegate : NSObject <NSApplicationDelegate>
-
-@property (nonatomic, retain) IBOutlet SplineDivisionView *splineDivisionView;
-
-- (IBAction)changeCurveStart:(id)sender;
-- (IBAction)changeCurveEnd:(id)sender;
-- (IBAction)changeCurveProbe:(id)sender;
-- (IBAction)selectExample:(id)sender;
 
 @end

@@ -181,4 +181,50 @@
     return previousPoint;
 }
 
+- (CGFloat)length {
+    CGFloat length = 0;
+    
+    NSPoint points[3];
+    NSPoint previousPoint = NSZeroPoint;
+    for (NSUInteger elementIndex = 0; elementIndex < [self elementCount]; elementIndex++) {
+        
+        NSBezierPathElement element = [self elementAtIndex:(NSInteger)elementIndex associatedPoints:points];
+        switch (element) {
+            case NSMoveToBezierPathElement: {
+                NSPoint p = points[0];
+                previousPoint = p;
+            } break;
+                
+            case NSLineToBezierPathElement: {
+                NSPoint p1 = previousPoint;
+                NSPoint p2 = points[0];
+                
+                CGFloat lineLength = SMLineGetLength(p1, p2);
+                length += lineLength;
+                
+                previousPoint = p2;
+            } break;
+                
+            case NSCurveToBezierPathElement: {
+                CGPoint p1 = previousPoint;
+                CGPoint p2 = points[0];
+                CGPoint p3 = points[1];
+                CGPoint p4 = points[2];
+                
+                CGFloat curveLength = SMSplineGetTotalLength(p1, p2, p3, p4);
+                length += curveLength;
+                
+                previousPoint = points[2];
+            } break;
+                
+            case NSClosePathBezierPathElement: {
+            } break;
+                
+            default:
+                break;
+        }
+    }
+    return length;
+}
+
 @end

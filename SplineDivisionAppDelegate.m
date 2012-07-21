@@ -11,9 +11,12 @@
 #import "NSBezierPath+Subdivision.h"
 
 
-@interface SplineDivisionAppDelegate ()
+@interface SplineDivisionAppDelegate () <SplineDivisionViewDelegate>
 
-- (NSBezierPath *)pathForExample:(NSUInteger)exampleIndex;
+@property (nonatomic, retain) IBOutlet SplineDivisionView *splineDivisionView;
+@property (assign) IBOutlet NSSlider *startSlider;
+@property (assign) IBOutlet NSSlider *endSlider;
+@property (assign) IBOutlet NSSlider *probeSlider;
 
 @end
 
@@ -21,6 +24,9 @@
 @implementation SplineDivisionAppDelegate
 
 @synthesize splineDivisionView = _splineDivisionView;
+@synthesize startSlider = _startSlider;
+@synthesize endSlider = _endSlider;
+@synthesize probeSlider = _probeSlider;
 
 #pragma mark - Initialization / Deallocation
 
@@ -37,6 +43,13 @@
     
     self.splineDivisionView.pathStart = 50.0f;
     self.splineDivisionView.pathEnd = 150.0f;
+    
+    CGFloat length = [self.splineDivisionView.path length];
+    self.startSlider.maxValue = length;
+    self.endSlider.maxValue = length;
+    self.probeSlider.maxValue = length;
+    
+    self.splineDivisionView.delegate = self;
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication {
@@ -112,8 +125,8 @@
             
         case 6: {
             NSBezierPath *path = [NSBezierPath bezierPath];
-            [path appendBezierPathWithOvalInRect:NSMakeRect(150, 100, 100, 100)];
-            [path appendBezierPathWithOvalInRect:NSMakeRect(200, 100, 100, 100)];
+            [path appendBezierPathWithOvalInRect:NSMakeRect(100, 100, 300, 300)];
+            [path appendBezierPathWithOvalInRect:NSMakeRect(250, 100, 300, 300)];
             return path;
         } break;
             
@@ -125,6 +138,15 @@
 
 - (IBAction)replaceWithSubpath:(id)sender {
     self.splineDivisionView.path = [self.splineDivisionView.path subpathFromLength:self.splineDivisionView.pathStart toLength:self.splineDivisionView.pathEnd];
+}
+
+#pragma mark - Spline division view delegate
+
+- (void)splineDivisionViewDidChangePath:(SplineDivisionView *)view {
+    CGFloat length = [self.splineDivisionView.path length];
+    self.startSlider.maxValue = length;
+    self.endSlider.maxValue = length;
+    self.probeSlider.maxValue = length;
 }
 
 @end
