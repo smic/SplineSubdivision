@@ -239,13 +239,13 @@ typedef struct {
     
 //    [self drawCurveSubdivisions:self.path];
 	
-    [subpath drawTangents];
+    [self.path drawTangents];
     
     // draw probe
     CGPoint probePoint = [self.path pointAtLength:self.probe];
     [self drawProbeAtPoint:probePoint];
     
-    [subpath drawHandles];
+    [self.path drawHandles];
 }
 
 - (void)drawProbeAtPoint:(NSPoint)point {
