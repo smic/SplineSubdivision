@@ -8,6 +8,7 @@
 
 #import "SMSplineDivisionView.h"
 #import "NSBezierPath+SMSubdivision.h"
+#import "NSBezierPath+SMDrawing.h"
 #import "SMLineGeometry.h"
 #import "SMSplineGeometry.h"
 
@@ -238,86 +239,13 @@ typedef struct {
     
 //    [self drawCurveSubdivisions:self.path];
 	
-	CGFloat dashPattern[2];
-	dashPattern[0] = 5.0f;
-	dashPattern[1] = 2.0f;
-    
-    // draw tangents to the control points
-    NSPoint points[3];
-    NSPoint previousPoint;
-    NSUInteger numberOfElements = [self.path elementCount];
-    for (NSUInteger elementIndex = 0; elementIndex < numberOfElements; elementIndex++) {
-        NSBezierPathElement element = [self.path elementAtIndex:(NSInteger)elementIndex associatedPoints:points];
-        switch (element) {
-            case NSMoveToBezierPathElement: {
-                previousPoint = points[0];
-            } break;
-                
-            case NSLineToBezierPathElement: {
-                previousPoint = points[0];
-            } break;
-                
-            case NSCurveToBezierPathElement: {
-                [[NSColor redColor] set];
-                NSBezierPath *path2 = [NSBezierPath bezierPath];
-                [path2 setLineDash:dashPattern count: 2 phase: 0.0];
-                [path2 moveToPoint:previousPoint];
-                [path2 lineToPoint:points[0]];
-                [path2 moveToPoint:points[1]];
-                [path2 lineToPoint:points[2]];
-                [path2 stroke];
-                
-                previousPoint = points[2];
-            } break;
-                
-            case NSClosePathBezierPathElement: {
-            } break;
-                
-            default:
-                break;
-        }
-    }
+    [subpath drawTangents];
     
     // draw probe
     CGPoint probePoint = [self.path pointAtLength:self.probe];
     [self drawProbeAtPoint:probePoint];
     
-    // draw handle for all points
-    for (NSUInteger elementIndex = 0; elementIndex < numberOfElements; elementIndex++) {
-        NSBezierPathElement element = [self.path elementAtIndex:(NSInteger)elementIndex associatedPoints:points];
-        switch (element) {
-            case NSMoveToBezierPathElement: {
-                [[NSColor whiteColor] set];
-                [self drawHandleAtPoint:points[0]];
-                
-                previousPoint = points[0];
-            } break;
-                
-            case NSLineToBezierPathElement: {
-                [[NSColor whiteColor] set];
-                [self drawHandleAtPoint:points[0]];
-                
-                previousPoint = points[0];
-            } break;
-                
-            case NSCurveToBezierPathElement: {
-                [[NSColor redColor] set];
-                [self drawHandleAtPoint:points[0]];
-                [[NSColor redColor] set];
-                [self drawHandleAtPoint:points[1]];
-                [[NSColor whiteColor] set];
-                [self drawHandleAtPoint:points[2]];
-                
-                previousPoint = points[2];
-            } break;
-                
-            case NSClosePathBezierPathElement: {
-            } break;
-                
-            default:
-                break;
-        }
-    }
+    [subpath drawHandles];
 }
 
 - (void)drawProbeAtPoint:(NSPoint)point {
@@ -329,13 +257,6 @@ typedef struct {
     [path fill];
 //    [[NSColor colorWithDeviceRed:0.2f green:0.2f blue:0.6f alpha:1.0f] set];
 //    [path stroke];
-}
-
-- (void)drawHandleAtPoint:(NSPoint)point {
-    NSRect rect = NSInsetRect(NSMakeRect(point.x, point.y, 0, 0), -3, -3);
-	NSRectFill(rect);
-    [[NSColor blackColor] set];
-    NSFrameRect(rect);
 }
 
 static NSUInteger subdivisionIndex;

@@ -12,6 +12,7 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D440300115BAAA590017C923 /* SMLineGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = D440300015BAAA590017C923 /* SMLineGeometry.m */; };
+		D440300815BAB6480017C923 /* NSBezierPath+SMDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = D440300715BAB6470017C923 /* NSBezierPath+SMDrawing.m */; };
 		D442F5C014B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m in Sources */ = {isa = PBXBuildFile; fileRef = D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m */; };
 		D4A4559A15B81048008C39C3 /* SMSplineGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = D4A4559915B81048008C39C3 /* SMSplineGeometry.m */; };
 		D4E4E3D41230CF27003B59EA /* SMSplineDivisionView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E4E3D31230CF27003B59EA /* SMSplineDivisionView.m */; };
@@ -31,6 +32,8 @@
 		8D1107320486CEB800E47090 /* SplineSubdivision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplineSubdivision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4402FFF15BAAA580017C923 /* SMLineGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMLineGeometry.h; sourceTree = "<group>"; };
 		D440300015BAAA590017C923 /* SMLineGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMLineGeometry.m; sourceTree = "<group>"; };
+		D440300615BAB6470017C923 /* NSBezierPath+SMDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBezierPath+SMDrawing.h"; sourceTree = "<group>"; };
+		D440300715BAB6470017C923 /* NSBezierPath+SMDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBezierPath+SMDrawing.m"; sourceTree = "<group>"; };
 		D442F5BE14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBezierPath+SMSubdivision.h"; sourceTree = "<group>"; };
 		D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBezierPath+SMSubdivision.m"; sourceTree = "<group>"; };
 		D4A4559815B81048008C39C3 /* SMSplineGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMSplineGeometry.h; sourceTree = "<group>"; };
@@ -58,6 +61,8 @@
 			children = (
 				D442F5BE14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.h */,
 				D442F5BF14B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m */,
+				D440300615BAB6470017C923 /* NSBezierPath+SMDrawing.h */,
+				D440300715BAB6470017C923 /* NSBezierPath+SMDrawing.m */,
 				D4402FFF15BAAA580017C923 /* SMLineGeometry.h */,
 				D440300015BAAA590017C923 /* SMLineGeometry.m */,
 				D4A4559815B81048008C39C3 /* SMSplineGeometry.h */,
@@ -204,6 +209,7 @@
 				D442F5C014B5CC7800FB8FD0 /* NSBezierPath+SMSubdivision.m in Sources */,
 				D4A4559A15B81048008C39C3 /* SMSplineGeometry.m in Sources */,
 				D440300115BAAA590017C923 /* SMLineGeometry.m in Sources */,
+				D440300815BAB6480017C923 /* NSBezierPath+SMDrawing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
