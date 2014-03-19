@@ -13,29 +13,14 @@
 #import "SMSplineGeometry.h"
 
 
-static char SMSplineDivisionViewObservationContext;
+static void *SMObservationContext = &SMObservationContext;
 
 typedef struct {
     NSUInteger elementIndex;
     NSUInteger pointIndex;
 } PathPoint;
 
-@interface SMSplineDivisionView ()
-
-- (NSUInteger)numberOfPointsForElement:(NSBezierPathElement)element;
-- (PathPoint)pathPointUnderMouse:(NSPoint)point;
-- (void)drawHandleAtPoint:(NSPoint)point;
-    
-@end
-
-
 @implementation SMSplineDivisionView
-
-@synthesize path = _path;
-@synthesize pathStart = _pathStart;
-@synthesize pathEnd = _pathEnd;
-@synthesize probe = _probe;
-@synthesize delegate = _delegate;
 
 #pragma mark - Initialization / Deallocation
 
@@ -54,19 +39,19 @@ typedef struct {
         [self addObserver:self 
                forKeyPath:@"path" 
                   options:(NSKeyValueObservingOptionNew) 
-                  context:&SMSplineDivisionViewObservationContext];
+                  context:SMObservationContext];
         [self addObserver:self 
                forKeyPath:@"pathStart" 
                   options:(NSKeyValueObservingOptionNew) 
-                  context:&SMSplineDivisionViewObservationContext];
+                  context:SMObservationContext];
         [self addObserver:self
                forKeyPath:@"pathEnd" 
                   options:(NSKeyValueObservingOptionNew) 
-                  context:&SMSplineDivisionViewObservationContext];
+                  context:SMObservationContext];
         [self addObserver:self
                forKeyPath:@"probe"
                   options:(NSKeyValueObservingOptionNew)
-                  context:&SMSplineDivisionViewObservationContext];
+                  context:SMObservationContext];
     }
     return self;
 }
@@ -75,16 +60,16 @@ typedef struct {
     // remove observer for properties
     [self removeObserver:self 
               forKeyPath:@"path" 
-                 context:&SMSplineDivisionViewObservationContext];
+                 context:SMObservationContext];
     [self removeObserver:self 
               forKeyPath:@"pathStart" 
-                 context:&SMSplineDivisionViewObservationContext];
+                 context:SMObservationContext];
     [self removeObserver:self
               forKeyPath:@"pathEnd" 
-                 context:&SMSplineDivisionViewObservationContext];
+                 context:SMObservationContext];
     [self removeObserver:self
               forKeyPath:@"probe"
-                 context:&SMSplineDivisionViewObservationContext];
+                 context:SMObservationContext];
 }
 
 #pragma mark - User interaction
@@ -343,7 +328,7 @@ static NSUInteger subdivisionIndex;
                      ofObject:(id)object
                        change:(NSDictionary *)change
                       context:(void *)context {
-    if (context != &SMSplineDivisionViewObservationContext) {
+    if (context != SMObservationContext) {
         [super observeValueForKeyPath:keyPath 
                              ofObject:object 
                                change:change 
