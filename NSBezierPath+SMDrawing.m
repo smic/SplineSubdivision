@@ -97,15 +97,9 @@
 }
 
 - (void)drawHandleAtPoint:(NSPoint)point {
-    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-    
-    point = CGContextConvertPointToDeviceSpace(context, point);
-    
     point.x = roundf(point.x + 0.5f) - 0.5f;
     point.y = roundf(point.y + 0.5f) - 0.5f;
     NSRect rect = NSMakeRect(point.x - 3.5f, point.y - 3.5f, 7.0f, 7.0f);
-    
-    rect = CGContextConvertRectToUserSpace(context, rect);
     
 	NSRectFill(rect);
     

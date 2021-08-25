@@ -119,8 +119,8 @@ typedef struct {
 	
     [[NSCursor closedHandCursor] set];
 	NSRect bounds = self.bounds;
-	while ([event type]!=NSLeftMouseUp) {
-		event = [[self window] nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+    while ([event type]!=NSEventTypeLeftMouseUp) {
+        event = [[self window] nextEventMatchingMask:(NSEventMaskLeftMouseDragged | NSEventMaskLeftMouseUp)];
 		NSPoint currentPoint = [self convertPoint:[event locationInWindow] fromView:nil];
 		currentPoint.x = fminf(fmaxf(currentPoint.x, bounds.origin.x), bounds.size.width);
 		currentPoint.y = fminf(fmaxf(currentPoint.y, bounds.origin.y), bounds.size.height);
